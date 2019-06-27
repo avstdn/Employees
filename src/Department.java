@@ -1,7 +1,10 @@
+import java.util.List;
+
 public class Department {
     private String name;
     private double averageSalary;
     private int employeeQuantity;
+    private List<Employee> employees;
 
     public String getName() {
         return name;
@@ -15,16 +18,27 @@ public class Department {
         return employeeQuantity;
     }
 
-    public Department(String name, int employeeQuantity, double averageSalary) {
+    public List<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void printEmployeesSalary() {
+        for (Employee e : employees) {
+            System.out.println(e.getSalary());
+        }
+    }
+
+    public Department(String name, int employeeQuantity, double averageSalary, List<Employee> employees) {
         this.name = name;
         this.employeeQuantity = employeeQuantity;
         this.averageSalary = averageSalary;
+        this.employees = employees;
     }
 
     @Override
     public String toString() {
-        return "Название департамента: " + this.getName() +
+        return "Отдел: " + this.getName() +
                 "\nКоличество сотрудников: " + this.getEmployeeQuantity() +
-                "\nСредняя зарплата: " + this.getAverageSalary();
+                "\nСредняя зарплата: " + this.getAverageSalary() + "\n";
     }
 }

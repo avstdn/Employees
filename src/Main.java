@@ -36,9 +36,7 @@ public class Main {
 
         List<Department> departments = getDepartments(employees);
 
-        for (Department d : departments) {
-            System.out.println(d.toString());
-        }
+        printPermutation(departments);
     }
 
     public static List<Department> getDepartments(List<Employee> employees) {
@@ -55,13 +53,39 @@ public class Main {
 
         for (String d : departmentMap.keySet()) {
             int sumSalary = 0;
+            List<Employee> employeeDepartment = new ArrayList<>();
+
             for (Employee e : employees) {
-                if (e.getDepartment().equals(d)) sumSalary += e.getSalary();
+                if (e.getDepartment().equals(d)) {
+                    sumSalary += e.getSalary();
+                    employeeDepartment.add(e);
+                }
             }
             double avgSalary = sumSalary / departmentMap.get(d);
-            departments.add(new Department(d, departmentMap.get(d), avgSalary));
+            departments.add(new Department(d, departmentMap.get(d), avgSalary, employeeDepartment));
         }
 
         return departments;
+    }
+
+    public static void printPermutation(List<Department> departments) {
+        for (int i = 0; i < departments.size(); i++) {
+            for (int j = i + 1; j < departments.size(); j++) {
+                Department firstDepartment = departments.get(i);
+                Department lastDepartment = departments.get(j);
+
+                for (Employee e : firstDepartment.getEmployees()) {
+                    if (e.getSalary() > lastDepartment.getAverageSalary()
+                            && e.getSalary() < firstDepartment.getAverageSalary()) {
+                        System.out.println("employee: " + e);
+                        System.out.println("first: " + firstDepartment.getName());
+                        System.out.println("last: " + lastDepartment.getName());
+                        System.out.println("first avg salary: " + firstDepartment.getAverageSalary());
+                        System.out.println("last avg salary: " + lastDepartment.getAverageSalary());
+                    }
+                }
+                System.out.println("===============");
+            }
+        }
     }
 }
