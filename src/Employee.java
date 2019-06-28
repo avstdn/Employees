@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Employee {
     private String firstName;
     private String middleName;
@@ -25,21 +27,25 @@ public class Employee {
         return salary;
     }
 
-    public Employee(String line) {
-        String[] split = line.split(", ");
-        firstName = split[0].split(" ")[0];
-        middleName = split[0].split(" ")[1];
-        lastName = split[0].split(" ")[2];
-        department = split[1];
-        salary = Integer.parseInt(split[2]);
+    public String getFullName() {
+        return lastName + " " + firstName + " " + middleName;
+    }
+
+    public Employee(String[] lines) {
+        String[] fullName = lines[0].split(" ");
+        lastName = fullName[0];
+        firstName = fullName[1];
+        middleName = fullName[2];
+        department = lines[1];
+        salary = Integer.parseInt(lines[2]);
     }
 
     @Override
     public String toString() {
-        return "Имя: " + getFirstName() +
-                "\nОтчество: " + getMiddleName() +
-                "\nФамилия: " + getLastName() +
-                "\nОтдел: " + getDepartment() +
-                "\nЗарплата: " + getSalary() + " руб.\n";
+        return "Имя: " + getFirstName() + "\n" +
+                "Отчество: " + getMiddleName() + "\n" +
+                "Фамилия: " + getLastName() + "\n" +
+                "Отдел: " + getDepartment() + "\n" +
+                "Зарплата: " + getSalary() + " руб.\n";
     }
 }
