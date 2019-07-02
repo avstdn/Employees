@@ -27,11 +27,11 @@ public class OperationFile implements OperationIO {
         return lines;
     }
 
-    public void write(List<String> departmentsAvgSalary, List<String> transitions) {
+    public void write(List<String> averageSalary, List<String> transitions) {
         try {
             PrintWriter writer = new PrintWriter(outputFile);
 
-            for (String departmentAvgSalary : departmentsAvgSalary) {
+            for (String departmentAvgSalary : averageSalary) {
                 writer.println(departmentAvgSalary);
             }
 

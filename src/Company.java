@@ -78,8 +78,16 @@ public class Company {
         avgSalaryList.add("СРЕДНЯЯ ЗАРПЛАТА ПО ОТДЕЛАМ:\n");
 
         for (Department department : departments) {
-            String temp = department.getName() + " " + department.getAverageSalary() + " руб.\n";
-            avgSalaryList.add(temp);
+            StringBuilder temp = new StringBuilder();
+            temp.append(department.getName())
+                    .append(" ")
+                    .append(department.getAverageSalary())
+                    .append(" руб.\n");
+            for (Employee employee : department.getEmployees()) {
+                temp.append(employee);
+            }
+
+            avgSalaryList.add(temp.toString());
         }
 
         return avgSalaryList;

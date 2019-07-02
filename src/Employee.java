@@ -19,6 +19,6 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "\tФИО: " + this.getFullName() + "\n" + "\tЗарплата: " + this.getSalary() + " руб.\n";
+        return "\tФИО: " + this.getFullName() + "(зарплата: " + this.getSalary() + " руб.)\n";
     }
 }
