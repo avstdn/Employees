@@ -21,7 +21,7 @@ public class OperationFile implements OperationIO {
                 }
 
                 OutputFormatting.calculateMaxLength(split[0], split[1]);
-                BigDecimal employeeSalary = new BigDecimal(split[2]).setScale(2, RoundingMode.CEILING);
+                BigDecimal employeeSalary = new BigDecimal(split[2]).setScale(2, RoundingMode.FLOOR);
 
                 if (departmentsMap.containsKey(split[1])) {
                     departmentsMap.get(split[1]).addEmployee(new Employee(split[0], employeeSalary));
@@ -52,7 +52,7 @@ public class OperationFile implements OperationIO {
 
             writer.close();
         } catch (IOException e) {
-            System.out.println("Ошибка при записи файла");
+            System.out.println("Ошибка записи файла");
         }
     }
 }

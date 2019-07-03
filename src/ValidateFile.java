@@ -7,6 +7,11 @@ public class ValidateFile implements ValidateInput {
 
     public boolean validate(String[] args) {
         try {
+            if (args.length == 0) {
+                System.out.println("Не указан путь к файлу");
+                return false;
+            }
+
             Scanner scanner = new Scanner(new File(args[0]));
             scanner.nextLine();
             int lineNumber = 2;
@@ -52,11 +57,11 @@ public class ValidateFile implements ValidateInput {
             }
 
             scanner.close();
-        } catch (RuntimeException e) {
-            System.out.println("Не указан путь к файлу");
-            return false;
         } catch (FileNotFoundException e) {
             System.out.println("Файл не найден по указанному пути");
+            return false;
+        } catch (Exception e) {
+            System.out.println("Ошибка валидации файла");
             return false;
         }
 
