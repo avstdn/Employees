@@ -1,5 +1,6 @@
 import java.io.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public class OperationFile implements OperationIO {
@@ -20,11 +21,12 @@ public class OperationFile implements OperationIO {
                 }
 
                 OutputFormatting.calculateMaxLength(split[0], split[1]);
+                BigDecimal employeeSalary = new BigDecimal(split[2]).setScale(2, RoundingMode.CEILING);
 
                 if (departmentsMap.containsKey(split[1])) {
-                    departmentsMap.get(split[1]).addEmployee(new Employee(split[0], new BigDecimal(split[2])));
+                    departmentsMap.get(split[1]).addEmployee(new Employee(split[0], employeeSalary));
                 } else {
-                    departmentsMap.put(split[1], new Department(split[1], new Employee(split[0], new BigDecimal(split[2]))));
+                    departmentsMap.put(split[1], new Department(split[1], new Employee(split[0], employeeSalary)));
                 }
             }
 

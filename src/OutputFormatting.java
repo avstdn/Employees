@@ -17,16 +17,16 @@ public class OutputFormatting {
     }
 
     public static String getTransitions(Employee employee, Department firstDepartment, Department secondDepartment) {
-        String format = "%s%n%-3s %-"
-                + departmentNameMaxLength + "s %-32s %s%n%-3s %-"
+        String format = "%s%n%-4s %-"
+                + departmentNameMaxLength + "s %-32s %s%n%-4s %-"
                 + departmentNameMaxLength + "s %-32s %s%n";
 
         return String.format(format,
                     employee.getFullName(),
-                    "Из:", secondDepartment.getName(),
+                    "\t" + "Из:", secondDepartment.getName(),
                     "Средняя зарплата после перевода:",
                     secondDepartment.getAverageSalaryFrom(employee) + " руб.",
-                    "В:", firstDepartment.getName(),
+                    "\t" + "В:", firstDepartment.getName(),
                     "Средняя зарплата после перевода:",
                     firstDepartment.getAverageSalaryTo(employee) + " руб."
                 );
