@@ -3,17 +3,27 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class ValidateFile implements ValidateInput {
+    private final static int maxColumnsNumber = 3;
+
     public boolean validate(String[] args) {
         try {
             Scanner scanner = new Scanner(new File(args[0]));
             scanner.nextLine();
             int lineNumber = 2;
 
+            if (!scanner.hasNext()) {
+                System.out.println("Файл пуст");
+                return false;
+            }
+
             while (scanner.hasNextLine()) {
                 String[] splitText = scanner.nextLine().split(",");
 
                 if (splitText.length < 3) {
                     System.out.println("Отсутствуют необходимые поля (строка: " + lineNumber + ")");
+                    return false;
+                } else if (splitText.length > 3) {
+                    System.out.println("Количество полей более " + maxColumnsNumber + " (строка: " + lineNumber + ")");
                     return false;
                 } else if (splitText[0].trim().length() == 0) {
                     System.out.println("Поле \"ФИО\" пусто (строка: " + lineNumber + ")");
