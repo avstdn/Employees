@@ -1,3 +1,5 @@
+package ru.tsc.task1;
+
 /**
  * ЗАДАНИЕ:
  *
@@ -9,6 +11,24 @@
 public class Main {
     public static void main(String[] args) {
         Company company = new Company();
-        company.run(args);
+
+        if (argsIsAbsent(args)) return;
+
+        String inputFile = args[0];
+        String outputFile = args[1];
+
+        company.calculateAverageAndTransitions(inputFile, outputFile);
+    }
+
+    private static boolean argsIsAbsent(String[] args) {
+        if (args.length > 1) {
+            return false;
+        } else if (args.length == 1) {
+            System.out.println("Не указан путь к выходному файлу");
+        } else {
+            System.out.println("Не указан путь к входному и выходному файлам");
+        }
+
+        return true;
     }
 }

@@ -1,3 +1,8 @@
+package ru.tsc.task1;
+
+import ru.tsc.task1.entities.Department;
+import ru.tsc.task1.entities.Employee;
+
 import java.math.BigDecimal;
 
 public class OutputFormatting {
