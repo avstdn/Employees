@@ -1,20 +1,21 @@
-package ru.tsc.task1;
+package ru.tsc.task1.io;
 
+import ru.tsc.task1.OutputFormatting;
 import ru.tsc.task1.entities.Department;
+import ru.tsc.task1.entities.Employee;
+import ru.tsc.task1.validation.IValidateInput;
+import ru.tsc.task1.validation.ValidateFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class OperationFile implements IOperationIO {
     public List<Department> readInputFile(String inputFilePath) {
-//        Map<String, Department> departmentsMap = new HashMap<>();
-        List<Department> departments = new ArrayList<>();
+        Map<String, Department> departmentsMap = new HashMap<>();
         IValidateInput validateFile = new ValidateFile();
 
         try {
@@ -38,13 +39,12 @@ public class OperationFile implements IOperationIO {
 
                 OutputFormatting.calculateMaxLength(employeeName, departmentName);
 
+                Employee newEmployee = new Employee(employeeName, employeeSalary);
+                Department newDepartment = new Department(departmentName);
+                Department newEmployeeDepartment = departmentsMap.getOrDefault(departmentName, newDepartment);
 
-
-//                if (departmentsMap.containsKey(departmentName)) {
-//                    departmentsMap.get(departmentName).addEmployee(new Employee(employeeName, employeeSalary));
-//                } else {
-//                    departmentsMap.put(departmentName, new Department(departmentName, new Employee(employeeName, employeeSalary)));
-//                }
+                newEmployeeDepartment.addEmployee(newEmployee);
+                departmentsMap.putIfAbsent(departmentName, newEmployeeDepartment);
             }
 
             scanner.close();
@@ -52,15 +52,14 @@ public class OperationFile implements IOperationIO {
             System.out.println("Ошибка чтения файла");
         }
 
-//        return new ArrayList<>(departmentsMap.values());
-        return departments;
+        return new ArrayList<>(departmentsMap.values());
     }
 
-    public void writeOutputFile(String outputFilePath, List<String> averageSalary, List<String> transitions) {
+    public void writeOutputFile(String outputFilePath, List<String> departmentsAverageSalary, List<String> transitions) {
         try {
             PrintWriter writer = new PrintWriter(outputFilePath);
 
-            for (String departmentAvgSalary : averageSalary) {
+            for (String departmentAvgSalary : departmentsAverageSalary) {
                 writer.println(departmentAvgSalary);
             }
 

@@ -1,4 +1,4 @@
-package ru.tsc.task1;
+package ru.tsc.task1.validation;
 
 public class ValidateFile implements IValidateInput {
     private final static int MAX_COLUMNS_NUMBER = 3;

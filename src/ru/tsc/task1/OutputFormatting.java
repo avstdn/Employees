@@ -28,12 +28,12 @@ public class OutputFormatting {
 
         return String.format(format,
                     employee.getFullName(),
-                    "\t" + "Из:", secondDepartment.getName(),
+                    "\t" + "Из:", firstDepartment.getName(),
                     "Средняя зарплата после перевода:",
-                    secondDepartment.getAverageSalaryFrom(employee) + " руб.",
-                    "\t" + "В:", firstDepartment.getName(),
+                    firstDepartment.getAverageSalary() + " руб.",
+                    "\t" + "В:", secondDepartment.getName(),
                     "Средняя зарплата после перевода:",
-                    firstDepartment.getAverageSalaryTo(employee) + " руб."
+                    secondDepartment.getAverageSalary() + " руб."
                 );
     }
 
