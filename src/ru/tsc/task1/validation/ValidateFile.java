@@ -12,7 +12,7 @@ public class ValidateFile implements IValidateInput {
         String[] newLineFields = newLine.split(",");
         incrementLineNumber();
 
-        return isCorrectLength(newLineFields) && isCorrectFields(newLineFields);
+        return isCorrectLength(newLineFields) && isCorrectField(newLineFields);
     }
 
     private boolean isCorrectLength(String[] newLineFields) {
@@ -36,7 +36,7 @@ public class ValidateFile implements IValidateInput {
         return true;
     }
 
-    private boolean isCorrectFields(String[] newLineFields) {
+    private boolean isCorrectField(String[] newLineFields) {
         String employeeName = newLineFields[0];
         String employeeSalary = newLineFields[2];
 

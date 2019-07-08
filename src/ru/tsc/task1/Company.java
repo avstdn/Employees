@@ -6,7 +6,7 @@ import ru.tsc.task1.io.IOperationIO;
 import ru.tsc.task1.io.OperationFile;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,18 +33,22 @@ class Company {
 
         for (int i = 0; i < initialStateDepartments.size(); i++) {
             for (int j = i + 1; j < initialStateDepartments.size(); j++) {
-                Department firstDepartment = new Department(initialStateDepartments.get(i));
-                Department secondDepartment = new Department(initialStateDepartments.get(j));
+                Department tempStateFirstDepartment = new Department(initialStateDepartments.get(i));
+                Department tempStateSecondDepartment = new Department(initialStateDepartments.get(j));
 
-                compareDepartments(employeeTransfers, firstDepartment, secondDepartment);
-                compareDepartments(employeeTransfers, secondDepartment, firstDepartment);
+                List<String> firstDepartmentEmployeeTransfers = compareTransferDepartments(tempStateFirstDepartment, tempStateSecondDepartment);
+                List<String> secondDepartmentEmployeeTransfers = compareTransferDepartments(tempStateSecondDepartment, tempStateFirstDepartment);
+
+                employeeTransfers.addAll(firstDepartmentEmployeeTransfers);
+                employeeTransfers.addAll(secondDepartmentEmployeeTransfers);
             }
         }
 
         return employeeTransfers;
     }
 
-    private void compareDepartments(List<String> employeeTransfers, Department firstDepartment, Department secondDepartment) {
+    private List<String> compareTransferDepartments(Department firstDepartment, Department secondDepartment) {
+        List<String> firstDepartmentEmployeeTransfers = new ArrayList<>();
         List<Employee> firstDepartmentEmployees = firstDepartment.getEmployees();
         Iterator<Employee> employeesIterator = firstDepartmentEmployees.iterator();
 
@@ -56,28 +60,31 @@ class Company {
                     employeesIterator.remove();
                     firstDepartment.removeEmployee(firstDepartmentEmployee);
                     secondDepartment.addEmployee(firstDepartmentEmployee);
-                    employeeTransfers.add(OutputFormatting.getTransitions(firstDepartmentEmployee, firstDepartment, secondDepartment));
+                    String outputString = OutputFormatting.getTransitions(firstDepartmentEmployee, firstDepartment, secondDepartment);
+                    firstDepartmentEmployeeTransfers.add(outputString);
                 }
         }
+
+        return firstDepartmentEmployeeTransfers;
     }
 
     private List<String> getDepartmentsAverageSalary(List<Department> departments) {
-        List<String> allAverageSalary = new ArrayList<>();
-        allAverageSalary.add(OutputFormatting.AVERAGE_NAME + "\n");
+        List<String> departmentsAverageSalary = new ArrayList<>();
+        departmentsAverageSalary.add(OutputFormatting.AVERAGE_NAME + "\n");
 
         for (Department department : departments) {
-            StringBuilder tempString = new StringBuilder();
+            StringBuilder tempOutputString = new StringBuilder();
             String formattedAverageSalary = OutputFormatting.getSalary(department.getName(), department.getAverageSalary());
-            tempString.append(formattedAverageSalary);
+            tempOutputString.append(formattedAverageSalary);
 
             for (Employee employee : department.getEmployees()) {
-                tempString.append(OutputFormatting.getEmployee(employee));
+                tempOutputString.append(OutputFormatting.getEmployee(employee));
             }
 
-            allAverageSalary.add(tempString.toString());
+            departmentsAverageSalary.add(tempOutputString.toString());
         }
 
-        return allAverageSalary;
+        return departmentsAverageSalary;
     }
 
     private boolean fileIsEmpty(String inputFilePath) {
@@ -89,8 +96,8 @@ class Company {
                 System.out.println("Файл пуст");
                 return true;
             }
-        } catch (IOException e) {
-            System.out.println("Ошибка чтения файла");
+        } catch (FileNotFoundException e) {
+            System.out.println("Файл по указанному пути не найден");
             return true;
         }
 

@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         Company company = new Company();
 
-        if (argsIsAbsent(args)) return;
+        if (argsAreAbsent(args)) return;
 
         String inputFile = args[0];
         String outputFile = args[1];
@@ -20,7 +20,7 @@ public class Main {
         company.calculateAverageAndTransitions(inputFile, outputFile);
     }
 
-    private static boolean argsIsAbsent(String[] args) {
+    private static boolean argsAreAbsent(String[] args) {
         if (args.length > 1) {
             return false;
         } else if (args.length == 1) {
