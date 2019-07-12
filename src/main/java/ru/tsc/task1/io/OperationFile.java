@@ -68,7 +68,7 @@ public class OperationFile implements IOperationIO {
             }
 
             writer.close();
-            System.out.println("Программа завершилась успешно, результаты работы записаны в файл");
+            System.out.println("Программа завершилась успешно, результат записан в файл:\n" + outputFilePath);
         } catch (IOException e) {
             System.out.println("Ошибка записи файла");
         }

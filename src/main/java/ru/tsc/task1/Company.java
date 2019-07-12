@@ -7,8 +7,9 @@ import ru.tsc.task1.io.OperationFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,55 +18,31 @@ class Company {
         if (fileIsEmpty(inputFilePath)) return;
 
         IOperationIO fileOperations = new OperationFile();
-        List<Department> initialStateDepartments = fileOperations.readInputFile(inputFilePath);
+        List<Department> allDepartmentsList = fileOperations.readInputFile(inputFilePath);
 
-        if (initialStateDepartments == null) return;
+        if (allDepartmentsList == null) return;
 
-        List<String> departmentsAverageSalary = getDepartmentsAverageSalary(initialStateDepartments);
-        List<String> employeeTransfers = getEmployeeTransfers(initialStateDepartments);
+        List<String> departmentsAverageSalary = getDepartmentsAverageSalary(allDepartmentsList);
+        List<String> allEmployeeTransfers = getAllEmployeesTransfers(allDepartmentsList);
 
-        fileOperations.writeOutputFile(outputFilePath, departmentsAverageSalary, employeeTransfers);
+        fileOperations.writeOutputFile(outputFilePath, departmentsAverageSalary, allEmployeeTransfers);
     }
 
-    private List<String> getEmployeeTransfers(List<Department> initialStateDepartments) {
-        List<String> employeeTransfers = new ArrayList<>();
-        employeeTransfers.add(OutputFormatting.TRANSITION_NAME + "\n");
+    private boolean fileIsEmpty(String inputFilePath) {
+        try {
+            Scanner scanner = new Scanner(new File(inputFilePath));
+            scanner.nextLine();
 
-        for (int i = 0; i < initialStateDepartments.size(); i++) {
-            for (int j = i + 1; j < initialStateDepartments.size(); j++) {
-                Department tempStateFirstDepartment = new Department(initialStateDepartments.get(i));
-                Department tempStateSecondDepartment = new Department(initialStateDepartments.get(j));
-
-                List<String> firstDepartmentEmployeeTransfers = compareTransferDepartments(tempStateFirstDepartment, tempStateSecondDepartment);
-                List<String> secondDepartmentEmployeeTransfers = compareTransferDepartments(tempStateSecondDepartment, tempStateFirstDepartment);
-
-                employeeTransfers.addAll(firstDepartmentEmployeeTransfers);
-                employeeTransfers.addAll(secondDepartmentEmployeeTransfers);
+            if (!scanner.hasNext()) {
+                System.out.println("Файл пуст");
+                return true;
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("Файл по указанному пути не найден");
+            return true;
         }
 
-        return employeeTransfers;
-    }
-
-    private List<String> compareTransferDepartments(Department firstDepartment, Department secondDepartment) {
-        List<String> firstDepartmentEmployeeTransfers = new ArrayList<>();
-        List<Employee> firstDepartmentEmployees = firstDepartment.getEmployees();
-        Iterator<Employee> employeesIterator = firstDepartmentEmployees.iterator();
-
-        while (employeesIterator.hasNext()) {
-            Employee firstDepartmentEmployee = employeesIterator.next();
-
-                if (firstDepartmentEmployee.getSalary().compareTo(secondDepartment.getAverageSalary()) > 0
-                        && firstDepartmentEmployee.getSalary().compareTo(firstDepartment.getAverageSalary()) < 0) {
-                    employeesIterator.remove();
-                    firstDepartment.removeEmployee(firstDepartmentEmployee);
-                    secondDepartment.addEmployee(firstDepartmentEmployee);
-                    String outputString = OutputFormatting.getTransitions(firstDepartmentEmployee, firstDepartment, secondDepartment);
-                    firstDepartmentEmployeeTransfers.add(outputString);
-                }
-        }
-
-        return firstDepartmentEmployeeTransfers;
+        return false;
     }
 
     private List<String> getDepartmentsAverageSalary(List<Department> departments) {
@@ -87,20 +64,80 @@ class Company {
         return departmentsAverageSalary;
     }
 
-    private boolean fileIsEmpty(String inputFilePath) {
-        try {
-            Scanner scanner = new Scanner(new File(inputFilePath));
-            scanner.nextLine();
+    private List<String> getAllEmployeesTransfers(List<Department> allDepartmentsList) {
+        List<String> allEmployeesTransfers = new ArrayList<>();
+        allEmployeesTransfers.add(OutputFormatting.TRANSITION_NAME + "\n");
 
-            if (!scanner.hasNext()) {
-                System.out.println("Файл пуст");
-                return true;
+        for (int i = 0; i < allDepartmentsList.size(); i++) {
+            Department firstDepartment = allDepartmentsList.get(i);
+
+            for (int j = 0; j < allDepartmentsList.size(); j++) {
+                if (i == j) continue;
+
+                Department secondDepartment = allDepartmentsList.get(j);
+                List<String> employeesTransfersBetweenTwoDepartments = getEmployeesTransfersBetweenTwoDepartments(firstDepartment, secondDepartment);
+                allEmployeesTransfers.addAll(employeesTransfersBetweenTwoDepartments);
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("Файл по указанному пути не найден");
-            return true;
         }
 
-        return false;
+        return allEmployeesTransfers;
+    }
+
+    private List<String> getEmployeesTransfersBetweenTwoDepartments(Department firstDepartment, Department secondDepartment) {
+        List<String> firstDepartmentEmployeeTransfers = new ArrayList<>();
+        List<Employee> firstDepartmentEmployees = firstDepartment.getEmployees();
+
+        int bitsCount = (int) Math.pow(2, firstDepartment.getEmployeesAmount());
+
+        for (int i = 1; i < bitsCount; i++) {
+            List<Employee> subListEmployeesTransitions = new ArrayList<>();
+
+            BigDecimal firstDepartmentTotalSalary = getFirstDepartmentTotalSalary(i, firstDepartmentEmployees, subListEmployeesTransitions);
+            BigDecimal firstDepartmentAverageSalary = firstDepartmentTotalSalary.divide(new BigDecimal(subListEmployeesTransitions.size()), 2, RoundingMode.FLOOR);
+
+            if (firstDepartmentAverageSalary.compareTo(secondDepartment.getAverageSalary()) > 0
+                    && firstDepartmentAverageSalary.compareTo(firstDepartment.getAverageSalary()) < 0) {
+
+                BigDecimal newAverageForFirstDepartment = calculateNewAverageForFirstDepartment(firstDepartment, subListEmployeesTransitions.size(), firstDepartmentTotalSalary);
+                BigDecimal newAverageForSecondDepartment = calculateNewAverageForSecondDepartment(secondDepartment, subListEmployeesTransitions.size(), firstDepartmentTotalSalary);
+
+                String outputString = OutputFormatting.getTransitions(subListEmployeesTransitions, firstDepartment, newAverageForFirstDepartment, secondDepartment, newAverageForSecondDepartment);
+
+                firstDepartmentEmployeeTransfers.add(outputString);
+            }
+        }
+
+        return firstDepartmentEmployeeTransfers;
+    }
+
+    private BigDecimal getFirstDepartmentTotalSalary(int bitNumber, List<Employee> firstDepartmentEmployees, List<Employee> subListEmployeesTransitions) {
+        int bitsIndex = 0;
+        BigDecimal employeesTotalSalary = new BigDecimal(0);
+
+        while (bitNumber > 0) {
+            if ((bitNumber & 1) == 1) {
+                subListEmployeesTransitions.add(firstDepartmentEmployees.get(bitsIndex));
+                employeesTotalSalary = employeesTotalSalary.add(firstDepartmentEmployees.get(bitsIndex).getSalary());
+            }
+
+            bitNumber >>= 1;
+            bitsIndex++;
+        }
+
+        return employeesTotalSalary;
+    }
+
+    private BigDecimal calculateNewAverageForFirstDepartment(Department firstDepartment, int employeesTransferAmount, BigDecimal employeesTotalSalary) {
+        BigDecimal totalSalaryFirstDepartment = firstDepartment.getTotalSalary().subtract(employeesTotalSalary);
+        int employeesAmountFirstDepartment = firstDepartment.getEmployeesAmount() - employeesTransferAmount;
+
+        return totalSalaryFirstDepartment.divide(new BigDecimal(employeesAmountFirstDepartment), 2, RoundingMode.FLOOR);
+    }
+
+    private BigDecimal calculateNewAverageForSecondDepartment (Department secondDepartment, int employeesTransferAmount, BigDecimal employeesTotalSalary) {
+        BigDecimal totalSalarySecondDepartment = secondDepartment.getTotalSalary().add(employeesTotalSalary);
+        int employeesAmountSecondDepartment = secondDepartment.getEmployeesAmount() + employeesTransferAmount;
+
+        return totalSalarySecondDepartment.divide(new BigDecimal(employeesAmountSecondDepartment), 2, RoundingMode.FLOOR);
     }
 }

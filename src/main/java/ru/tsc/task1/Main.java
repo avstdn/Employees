@@ -14,10 +14,10 @@ public class Main {
 
         if (argsAreAbsent(args)) return;
 
-        String inputFile = args[0];
-        String outputFile = args[1];
+        String inputFilePath = args[0];
+        String outputFilePath = args[1];
 
-        company.calculateAverageAndTransitions(inputFile, outputFile);
+        company.calculateAverageAndTransitions(inputFilePath, outputFilePath);
     }
 
     private static boolean argsAreAbsent(String[] args) {

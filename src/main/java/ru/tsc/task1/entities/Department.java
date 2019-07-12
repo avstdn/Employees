@@ -9,6 +9,7 @@ public class Department {
     private String name;
     private List<Employee> employees = new ArrayList<>();
     private BigDecimal averageSalary;
+    private BigDecimal totalSalary;
 
     public String getName() {
         return name;
@@ -16,12 +17,6 @@ public class Department {
 
     public Department(String name) {
         this.name = name;
-    }
-
-    public Department(Department department) {
-        this.name = department.name;
-        this.averageSalary = department.averageSalary;
-        this.employees.addAll(department.getEmployees());
     }
 
     public List<Employee> getEmployees() {
@@ -43,7 +38,7 @@ public class Department {
         calculateSalary();
     }
 
-    private int getEmployeesAmount() {
+    public int getEmployeesAmount() {
         return employees.size();
     }
 
@@ -51,13 +46,17 @@ public class Department {
         return averageSalary.setScale(2, RoundingMode.FLOOR);
     }
 
+    public BigDecimal getTotalSalary() {
+        return totalSalary.setScale(2, RoundingMode.FLOOR);
+    }
+
     private void calculateSalary() {
-        BigDecimal partSumSalary = new BigDecimal(0);
+        totalSalary = new BigDecimal(0);
 
         for (Employee employee : employees) {
-            partSumSalary = partSumSalary.add(employee.getSalary());
+            totalSalary = totalSalary.add(employee.getSalary());
         }
 
-        averageSalary = partSumSalary.divide(new BigDecimal(getEmployeesAmount()), 2, RoundingMode.FLOOR);
+        averageSalary = totalSalary.divide(new BigDecimal(getEmployeesAmount()), 2, RoundingMode.FLOOR);
     }
 }
