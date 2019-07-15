@@ -22,7 +22,7 @@ public class OutputFormatting {
         return "\t" + String.format(format, employee.getFullName(), employee.getSalary() + " руб.");
     }
 
-    public static String getTransitions(List<Employee> employees,Department firstDepartment, BigDecimal firstDepartmentAverage, Department secondDepartment, BigDecimal secondDepartmentAverage) {
+    public static String getTransitions(List<Employee> employees, Department firstDepartment, BigDecimal firstDepartmentAverage, Department secondDepartment, BigDecimal secondDepartmentAverage) {
         StringBuilder outputTransitions = new StringBuilder();
         String format = "%-4s%-" + departmentNameMaxLength
                 + "s %s%n%-4s%-" + departmentNameMaxLength

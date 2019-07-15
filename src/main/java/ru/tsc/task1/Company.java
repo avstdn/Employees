@@ -84,7 +84,7 @@ class Company {
     }
 
     private List<String> getEmployeesTransfersBetweenTwoDepartments(Department firstDepartment, Department secondDepartment) {
-        List<String> firstDepartmentEmployeeTransfers = new ArrayList<>();
+        List<String> employeesTransfersBetweenTwoDepartments = new ArrayList<>();
         List<Employee> firstDepartmentEmployees = firstDepartment.getEmployees();
 
         int bitsCount = (int) Math.pow(2, firstDepartment.getEmployeesAmount());
@@ -92,50 +92,50 @@ class Company {
         for (int i = 1; i < bitsCount; i++) {
             List<Employee> subListEmployeesTransitions = new ArrayList<>();
 
-            BigDecimal firstDepartmentTotalSalary = getFirstDepartmentTotalSalary(i, firstDepartmentEmployees, subListEmployeesTransitions);
-            BigDecimal firstDepartmentAverageSalary = firstDepartmentTotalSalary.divide(new BigDecimal(subListEmployeesTransitions.size()), 2, RoundingMode.FLOOR);
+            BigDecimal firstDepartmentTransferTotalSalary = getFirstDepartmentTransferTotalSalary(i, firstDepartmentEmployees, subListEmployeesTransitions);
+            BigDecimal firstDepartmentTransferAverageSalary = firstDepartmentTransferTotalSalary.divide(new BigDecimal(subListEmployeesTransitions.size()), 2, RoundingMode.FLOOR);
 
-            if (firstDepartmentAverageSalary.compareTo(secondDepartment.getAverageSalary()) > 0
-                    && firstDepartmentAverageSalary.compareTo(firstDepartment.getAverageSalary()) < 0) {
+            if (firstDepartmentTransferAverageSalary.compareTo(secondDepartment.getAverageSalary()) > 0
+                    && firstDepartmentTransferAverageSalary.compareTo(firstDepartment.getAverageSalary()) < 0) {
 
-                BigDecimal newAverageForFirstDepartment = calculateNewAverageForFirstDepartment(firstDepartment, subListEmployeesTransitions.size(), firstDepartmentTotalSalary);
-                BigDecimal newAverageForSecondDepartment = calculateNewAverageForSecondDepartment(secondDepartment, subListEmployeesTransitions.size(), firstDepartmentTotalSalary);
+                BigDecimal newAverageForFirstDepartment = calculateNewAverageForFirstDepartment(firstDepartment, subListEmployeesTransitions.size(), firstDepartmentTransferTotalSalary);
+                BigDecimal newAverageForSecondDepartment = calculateNewAverageForSecondDepartment(secondDepartment, subListEmployeesTransitions.size(), firstDepartmentTransferTotalSalary);
 
                 String outputString = OutputFormatting.getTransitions(subListEmployeesTransitions, firstDepartment, newAverageForFirstDepartment, secondDepartment, newAverageForSecondDepartment);
 
-                firstDepartmentEmployeeTransfers.add(outputString);
+                employeesTransfersBetweenTwoDepartments.add(outputString);
             }
         }
 
-        return firstDepartmentEmployeeTransfers;
+        return employeesTransfersBetweenTwoDepartments;
     }
 
-    private BigDecimal getFirstDepartmentTotalSalary(int bitNumber, List<Employee> firstDepartmentEmployees, List<Employee> subListEmployeesTransitions) {
+    private BigDecimal getFirstDepartmentTransferTotalSalary(int bitNumber, List<Employee> firstDepartmentEmployees, List<Employee> subListEmployeesTransitions) {
         int bitsIndex = 0;
-        BigDecimal employeesTotalSalary = new BigDecimal(0);
+        BigDecimal firstDepartmentTransferTotalSalary = new BigDecimal(0);
 
         while (bitNumber > 0) {
             if ((bitNumber & 1) == 1) {
                 subListEmployeesTransitions.add(firstDepartmentEmployees.get(bitsIndex));
-                employeesTotalSalary = employeesTotalSalary.add(firstDepartmentEmployees.get(bitsIndex).getSalary());
+                firstDepartmentTransferTotalSalary = firstDepartmentTransferTotalSalary.add(firstDepartmentEmployees.get(bitsIndex).getSalary());
             }
 
             bitNumber >>= 1;
             bitsIndex++;
         }
 
-        return employeesTotalSalary;
+        return firstDepartmentTransferTotalSalary;
     }
 
-    private BigDecimal calculateNewAverageForFirstDepartment(Department firstDepartment, int employeesTransferAmount, BigDecimal employeesTotalSalary) {
-        BigDecimal totalSalaryFirstDepartment = firstDepartment.getTotalSalary().subtract(employeesTotalSalary);
+    private BigDecimal calculateNewAverageForFirstDepartment(Department firstDepartment, int employeesTransferAmount, BigDecimal firstDepartmentTransferTotalSalary) {
+        BigDecimal totalSalaryFirstDepartment = firstDepartment.getTotalSalary().subtract(firstDepartmentTransferTotalSalary);
         int employeesAmountFirstDepartment = firstDepartment.getEmployeesAmount() - employeesTransferAmount;
 
         return totalSalaryFirstDepartment.divide(new BigDecimal(employeesAmountFirstDepartment), 2, RoundingMode.FLOOR);
     }
 
-    private BigDecimal calculateNewAverageForSecondDepartment (Department secondDepartment, int employeesTransferAmount, BigDecimal employeesTotalSalary) {
-        BigDecimal totalSalarySecondDepartment = secondDepartment.getTotalSalary().add(employeesTotalSalary);
+    private BigDecimal calculateNewAverageForSecondDepartment (Department secondDepartment, int employeesTransferAmount, BigDecimal firstDepartmentTransferTotalSalary) {
+        BigDecimal totalSalarySecondDepartment = secondDepartment.getTotalSalary().add(firstDepartmentTransferTotalSalary);
         int employeesAmountSecondDepartment = secondDepartment.getEmployeesAmount() + employeesTransferAmount;
 
         return totalSalarySecondDepartment.divide(new BigDecimal(employeesAmountSecondDepartment), 2, RoundingMode.FLOOR);
