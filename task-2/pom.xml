@@ -4,8 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ru.tsc</groupId>
-    <artifactId>tsc</artifactId>
+    <groupId>ru.tsc.task-2</groupId>
+    <artifactId>task-2</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    
 </project>
